@@ -6,22 +6,18 @@ const Book = require('../model/Book');
 
 const router = express.Router();
 
-router.post("/",async (req, res, next) => {
+router.post("/", async (req, res, next) => {
     const { bookID } = req.body;
     // review
     // .create(req.body)
     // .exec()
     const reviws = new review(req.body);
-    await reviws.save()
-        .then(msg => {
-        res.send(msg);
-        console.log(msg._id)
-        // b.reviews.push(msg._id)
-        const b = Book.findByIdAndUpdate(bookID,{ $push: { reviews: "5cbf2d5a6892d34f685bc9e4" } })
-        console.log(b.reviews)
-
+    const r = await res.send(reviws);
+        reviws.save().then(m=>{
+        Book.updateOne({ _id: bookID }, { $push: { reviews: m._id } })
+        .then()
     })
-        .catch(err => next(createError(400, err.message)));
+    .catch(err => next(createError(400, err.message)));
 });
 
 router.get("/", (req, res, next) => {
