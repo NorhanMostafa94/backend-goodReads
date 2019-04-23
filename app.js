@@ -3,6 +3,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var createError = require('http-errors')
+
 require('./db');
 
 var indexRouter = require('./routes/index');
@@ -21,4 +23,17 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/books', booksRouter);
 app.use('/reviews', reviewsRouter);
+
+//not found middleware
+app.use((req,res,next)=>{
+    next(createError(404));
+})
+
+//error handler
+app.use((err,req,res,next)=>{
+    console.error(err)
+    res.status(err.status||500);
+    res.send(err)
+})
+
 module.exports = app;
