@@ -4,7 +4,7 @@ const categorySchema = new mongoose.Schema({
     categoryId:
         mongoose.Schema.Types.ObjectId,
 
-    Name: {
+    name: {
         type: String,
         required: true,
         minlength: 3,
@@ -14,7 +14,7 @@ const categorySchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    Books: {
+    books: {
         type: [
             {
                 type: mongoose.Schema.Types.ObjectId,
