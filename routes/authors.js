@@ -15,7 +15,10 @@ router.post('/', (req, res, next) => {
 
 router.get('/', (req, res, next) => {
     Author.find({}).populate('books')
-        .then(author => res.send(author))
+        .then(author => {
+            res.send(author)
+            // console.log(author)
+        })
         .catch(err => next(createError(400, err.message)))
 });
 
@@ -30,7 +33,7 @@ router.get('/:authorId', (req, res, next) => {
 
 router.patch('/:authorId', (req, res, next) => {
     const id = req.params.authorId;
-    Author.findByIdAndUpdate(id, req.body, { new: true })
+    Author.update({_id:id}, req.body, { new: true })
         .then(author => res.send(author))
         .catch(err => next(createError(400, err.message)))
 });
