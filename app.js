@@ -1,17 +1,19 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var createError = require('http-errors')
+const createError = require('http-errors')
 
 require('./db');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var booksRouter = require('./routes/books');  
-var reviewsRouter = require('./routes/reviews'); 
-var app = express();
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const booksRouter = require('./routes/books');
+const reviewsRouter = require('./routes/reviews');
+const categoryRouter = require('./routes/categories');
+
+const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -23,16 +25,17 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/books', booksRouter);
 app.use('/reviews', reviewsRouter);
+app.use('/api/categories', categoryRouter);
 
 //not found middleware
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
     next(createError(404));
 })
 
 //error handler
-app.use((err,req,res,next)=>{
+app.use((err, req, res, next) => {
     console.error(err)
-    res.status(err.status||500);
+    res.status(err.status || 500);
     res.send(err)
 })
 
