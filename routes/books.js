@@ -32,8 +32,17 @@ router.get("/:bookId", (req, res, next) => {
 
 router.delete("/:bookId", (req, res, next) => {
     User.findByIdAndDelete(req.params.bookId, req.body)
+        .exec()
+        .then(book => res.send(book))
+        .catch(err => next(createError(400, err.message)));
+});
+
+
+router.patch("/:bookId", (req, res, next) => {
+    User.findByIdAndUpdate(req.params.bookId, req.body, { new: true })
       .exec()
-      .then(user => res.send(user))
+      .then(book => res.send(book))
       .catch(err => next(createError(400, err.message)));
   });
+
 module.exports = router;
