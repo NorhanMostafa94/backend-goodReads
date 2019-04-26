@@ -28,9 +28,11 @@ router.post("/", async function (req, res, next) {
 //get one category by Id
 router.get("/:categoryId", (req, res, next) => {
     categoryModel
-        .findById(req.params.categoryId)
+        .findById(req.params.categoryId).populate('books')
         .exec()
-        .then(category => res.send(category))
+        .then(category => {
+            res.send(category);
+        })
         .catch(err => next(createError(404, err.message)));
 });
 
