@@ -13,19 +13,19 @@ router.post("/", (req, res, next) => {
 
 router.get("/", (req, res, next) => {
     Book
-        .find({})
+        .find({}).populate('authorID')
         .exec()
         .then(books => res.send(books))
         .catch(err => next(createError(500, err.message)));
 });
 
 router.get("/:bookId", (req, res, next) => {
-    Book.findById(req.params.bookId).populate('reviews')
+    Book.findById(req.params.bookId).populate('reviews').populate('authorID').populate('categoryID')
         .exec()
         .then(book => {
             debugger;
             res.send(book);
-            // console.log(book.reviews)
+            console.log(book.authorID)
         })
         .catch(err => next(createError(404, err.message)));
 });
