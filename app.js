@@ -30,8 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/usersbooks', userbooksRouter);
-app.use('/books', booksRouter);
+app.use('/api/usersbooks', userbooksRouter);
 app.use('/api/books', booksRouter);
 app.use('/api/reviews', reviewsRouter);
 app.use('/api/categories', categoryRouter);
