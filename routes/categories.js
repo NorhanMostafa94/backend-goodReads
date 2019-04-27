@@ -34,7 +34,7 @@ router.get("/:categoryId", (req, res, next) => {
 //get the books assigned to category
 router.get("/books/:categoryName", async (req, res, next) => {
     categoryModel
-        .findOne({ Name: req.params.categoryName }).populate('books')
+        .findOne({ name: req.params.categoryName }).populate('books')
         .exec()
         .then(category => res.send(category))
         .catch(err => next(createError(404, err.message)));
