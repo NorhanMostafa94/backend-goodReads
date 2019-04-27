@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const reviews = require('./Reviews');
 // const author = require('./author')
-// const category = require('./category');
+
 const BookSchema = new mongoose.Schema({
     bookId:
         mongoose.Schema.Types.ObjectId
@@ -11,14 +11,14 @@ const BookSchema = new mongoose.Schema({
         required: true,
         minlength: 3,
     },
-    // authorID: {
-    //     type: Schema.Types.ObjectId,
-    //      ref: author
-    // },
-    // categoryID: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: category
-    // },
+    authorID: {
+        type: mongoose.Schema.Types.ObjectId,
+         ref: 'Author'
+    },
+    categoryID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category'
+    },
     cover: {
         type: String,
         // required: true,
@@ -38,21 +38,19 @@ const BookSchema = new mongoose.Schema({
 
     },
     reviews:
-        // [{
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: 'Review'
-        // }]
+    // [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Review'
+    // }]
     {
         type: [
-                {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: 'Review'
-                }
-            ],
-        default:["5cbf4132aaaab94d94207d25"]
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Review'
+            }
+        ],
+        default: []
     }
-
-
 
 })
 const BookModel = mongoose.model('Book', BookSchema);
