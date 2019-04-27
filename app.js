@@ -7,10 +7,11 @@ const createError = require('http-errors')
 
 require('./db');
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const booksRouter = require('./routes/books');
-const reviewsRouter = require('./routes/reviews');
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+var booksRouter = require('./routes/books');  
+var reviewsRouter = require('./routes/reviews'); 
+var userbooksRouter= require('./routes/userBooks');
 const categoryRouter = require('./routes/categories');
 var authorsRouter = require('./routes/authors');
 const app = express();
@@ -29,6 +30,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/usersbooks', userbooksRouter);
+app.use('/books', booksRouter);
 app.use('/api/books', booksRouter);
 app.use('/api/reviews', reviewsRouter);
 app.use('/api/categories', categoryRouter);
