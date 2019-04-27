@@ -11,7 +11,7 @@ const CreateError = require("http-errors");
     
     .exec()
     .then(user => {
-      res.send(user.userbooks.book);
+      res.send(user.userbooks);
     })
     .catch(err => {
       next(CreateError(400, err.message));
