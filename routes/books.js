@@ -13,7 +13,7 @@ router.post("/", (req, res, next) => {
 
 router.get("/", (req, res, next) => {
     Book
-        .find({}).populate('authorID')
+        .find({}).populate('authorID').populate('categoryID')
         .exec()
         .then(books => res.send(books))
         .catch(err => next(createError(500, err.message)));
@@ -27,6 +27,7 @@ router.get("/:bookId", (req, res, next) => {
             res.send(book);
             console.log(book.authorID)
         })
+        
         .catch(err => next(createError(404, err.message)));
 });
 
@@ -38,11 +39,10 @@ router.delete("/:bookId", (req, res, next) => {
 });
 
 router.patch("/:bookId", (req, res, next) => {
-    User.findByIdAndUpdate(req.params.bookId, req.body, { new: true })
+    User.update({_id:req.params.bookId}, req.body, { new: true })
       .exec()
       .then(book => res.send(book))
       .catch(err => next(createError(400, err.message)));
   });
 
-  
 module.exports = router;
