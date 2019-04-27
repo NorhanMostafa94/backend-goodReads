@@ -16,13 +16,8 @@ router.get("/", (req, res, next) => {
 router.post("/", async function (req, res, next) {
     categoryModel
         .create(req.body)
-        .then(category => {
-            res.end(category);
-        })
-        .catch(err => {
-            console.log(err);
-            next(createError(400, err.message));
-        });
+        .then(category => res.send(category))
+        .catch(err => next(createError(400, err.message)));
 });
 
 //get one category by Id
