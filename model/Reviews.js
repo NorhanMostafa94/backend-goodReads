@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 const book = require('./Book');
 
 const ReviewSchema = new mongoose.Schema({
-    // UserId:{
-
+    // userId:{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref:'User'  
     // },
     name: {
         type: String

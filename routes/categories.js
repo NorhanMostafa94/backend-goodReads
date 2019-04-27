@@ -30,7 +30,9 @@ router.get("/:categoryId", (req, res, next) => {
     categoryModel
         .findById(req.params.categoryId).populate('books')
         .exec()
-        .then(category => res.send(category))
+        .then(category => {
+            res.send(category);
+        })
         .catch(err => next(createError(404, err.message)));
 });
 
