@@ -17,7 +17,7 @@ router.post("/", async function (req, res, next) {
     categoryModel
         .create(req.body)
         .then(category => {
-            res.end(JSON.stringify(category));
+            res.end(category);
         })
         .catch(err => {
             console.log(err);
@@ -28,7 +28,7 @@ router.post("/", async function (req, res, next) {
 //get one category by Id
 router.get("/:categoryId", (req, res, next) => {
     categoryModel
-        .findById(req.params.categoryId).populate('Books')
+        .findById(req.params.categoryId).populate('books')
         .exec()
         .then(category => res.send(category))
         .catch(err => next(createError(404, err.message)));
@@ -37,7 +37,7 @@ router.get("/:categoryId", (req, res, next) => {
 //get the books assigned to category
 router.get("/books/:categoryName", async (req, res, next) => {
     categoryModel
-        .findOne({ Name: req.params.categoryName }).populate('Books')
+        .findOne({ Name: req.params.categoryName }).populate('books')
         .exec()
         .then(category => res.send(category))
         .catch(err => next(createError(404, err.message)));
