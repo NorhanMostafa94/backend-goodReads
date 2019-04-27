@@ -27,6 +27,7 @@ router.get("/:bookId", (req, res, next) => {
             res.send(book);
             // console.log(book.reviews)
         })
+        
         .catch(err => next(createError(404, err.message)));
 });
 
