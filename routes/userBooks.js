@@ -6,7 +6,13 @@ const CreateError = require("http-errors");
 
 
   router.get("/:userId", (req, res, next) => {
-    User.findById(req.params.userId).populate('userbooks.book')
+    User.findById(req.params.userId).populate({ 
+      path: 'userbooks.book',
+      populate: {
+        path: 'userbooks.book.authorID',
+        model: 'Author'
+      } 
+   })
     
     .exec()
     .then(user => {
