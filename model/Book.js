@@ -13,7 +13,7 @@ const BookSchema = new mongoose.Schema({
     },
     authorID: {
         type: mongoose.Schema.Types.ObjectId,
-         ref: 'Author'
+        ref: 'Author'
     },
     categoryID: {
         type: mongoose.Schema.Types.ObjectId,
@@ -21,7 +21,7 @@ const BookSchema = new mongoose.Schema({
     },
     cover: {
         type: String,
-        // required: true,
+        required: true,
     },
     avgrating: {
         type: Number,
