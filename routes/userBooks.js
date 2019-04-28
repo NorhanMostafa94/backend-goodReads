@@ -9,7 +9,7 @@ const CreateError = require("http-errors");
     User.findById(req.params.userId).populate({ 
       path: 'userbooks.book',
       populate: {
-        path: 'userbooks.book.authorID',
+        path: 'authorID',
         model: 'Author'
       } 
    })
