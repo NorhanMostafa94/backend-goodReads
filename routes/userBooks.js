@@ -5,6 +5,8 @@ const User = require("../model/user");
 const CreateError = require("http-errors");
 
 
+const Book = require('./../model/Book');
+
 router.get("/:userId", (req, res, next) => {
   User.findById(req.params.userId).populate({
     path: 'userbooks.book',
@@ -99,6 +101,17 @@ router.get("/wantToRead/:userId", (req, res, next) => {
 router.patch("/rating/:userId/:bookId/:rating", async (req, res, next) => {
   debugger;
   bookrating = req.params.rating
+  const { avgrating } = await Book.findById(req.params.bookId)
+  // console.log(avgrating)
+  const users = await User.find({ 'userbooks.book': req.params.bookId })
+  const b = [];
+  const a = users.map(i => i.userbooks.filter(i => i.book == req.params.bookId)).map(r => r.map(rr => { b.push(rr.rating) }))
+  console.log(b)
+  const c = b.reduce(function (agg, val) {
+    return agg += val;
+
+  }, 0)
+  console.log(c)
   User.update({ 'userbooks.book': req.params.bookId }
     , {
       '$set': {
@@ -108,6 +121,8 @@ router.patch("/rating/:userId/:bookId/:rating", async (req, res, next) => {
   )
     .then(user => {
       res.send(user);
+      Book.updateOne({_id:req.params.bookId},{avgrating:c/b.length})
+      .then()
     })
     .catch(err => {
       next(CreateError(400, err.message));
