@@ -99,7 +99,7 @@ router.get("/wantToRead/:userId", (req, res, next) => {
 router.patch("/rating/:userId/:bookId/:rating", async(req,res,next)=>{
   debugger;
   bookrating = req.params.rating
-  User.findByIdAndUpdate({userbooks:ObjectId(req.params.bookId)},{ userbooks: {rating: bookrating} },{new:true})
+  User.findByIdAndUpdate({_id:req.params.userId},{ userbooks: {rating: bookrating} },{new:true})
     .then(user => {
       res.send(user);
     })
