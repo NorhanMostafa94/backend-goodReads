@@ -39,7 +39,7 @@ router.post("/login",async function (req,res,next){
   })
 })
 
-router.use(authMiddleware)
+// router.use(authMiddleware)
 
 
 
