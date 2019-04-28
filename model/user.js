@@ -2,8 +2,15 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 //const validator= require('validator');
 const bcrypt = require('bcrypt');
-const books= require('./Book');
-const validateEmail = function(email) {
+const Book = require('./Book');
+const util = require('util');
+const jwt = require('jsonwebtoken');
+
+const signPromise = util.promisify(jwt.sign);
+const verifyToken = util.promisify(jwt.verify);
+
+const secretKey ='kjkjkjlo';
+const validateEmail = function (email) {
   var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return re.test(email);
 };
@@ -11,7 +18,7 @@ const validateEmail = function(email) {
 
 const saltRounds = 10;
 const myPlaintextPassword = 's0/\/\P4$$w0rD';
-// bcrypt.hash(myPlaintextPassword, saltRounds)
+//  bcrypt.hash(myPlaintextPassword, saltRounds)
 //   .then(hashedPassword => {
 //     debugger
 //   })
@@ -42,6 +49,7 @@ var userSchema = new Schema({
       unique: true
     }
   },
+
   email: {
     type: String,
     trim: true,
@@ -57,9 +65,14 @@ var userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true
-
+    required: true,
+    minlength: 3
+   // hidden:true
   },
+  username: { 
+    type: String, 
+    unique: true, 
+    required: true },
   // confirmPassword: {
   //   type: String,
   //   required: true
@@ -85,23 +98,53 @@ var userSchema = new Schema({
     default: []
   }
 
-  // default:["5cbf4132aaaab94d94207d25"]
-
-
 }, {
-    autoIndex: true
-  });
-
-  const hashPassword= (password)=>{
-    bcrypt.hash(password, saltRounds);
+    autoIndex: true,
+    toJSON: {
+      transform: true
+    }
   }
+  // {
+  //   toJSON: {
+  //     transform: true
+  //   }
+  // }
+);
+
+const hashPassword = password => bcrypt.hash(password, saltRounds);
+
+userSchema.method('verifyPassword', function (password) {
+  const currentUser = this;
+  return bcrypt.compare(password, currentUser.password)
+})
+
+userSchema.static('verifyToken' ,async  function(token){
+ const userModel=this;
+  const decoded = await verifyToken(token,secretKey);
+ const userid= decoded._id;
+ return userModel.findById(userid);
+})
+
+userSchema.method('generateToken', function (){
+  const currentUser = this;
+  return signPromise({_id:currentUser._id},secretKey,{
+    expiresIn:'2h'
+  })
+});
+
 
 userSchema.pre('save', async function () {
   const currentUser = this;
+  //debugger
   if (currentUser.isNew) {
     currentUser.password = await hashPassword(currentUser.password)
   }
+  //debugger
 });
+
+
+
+
 
 const userModel = mongoose.model("User", userSchema);
 
