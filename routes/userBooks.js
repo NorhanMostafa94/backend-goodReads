@@ -96,10 +96,16 @@ router.get("/wantToRead/:userId", (req, res, next) => {
 
 
 //for testing rating
-router.patch("/rating/:userId/:bookId/:rating", async(req,res,next)=>{
+router.patch("/rating/:userId/:bookId/:rating", async (req, res, next) => {
   debugger;
   bookrating = req.params.rating
-  User.findByIdAndUpdate({_id:req.params.userId},{ userbooks: {rating: bookrating} },{new:true})
+  User.update({ 'userbooks.book': req.params.bookId }
+    , {
+      '$set': {
+        'userbooks.$.rating': bookrating
+      }
+    }
+  )
     .then(user => {
       res.send(user);
     })
