@@ -16,11 +16,12 @@ const categoryRouter = require('./routes/categories');
 var authorsRouter = require('./routes/authors');
 const app = express();
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE");
     next();
-  });
+});
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -30,10 +31,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/usersbooks', userbooksRouter);
-app.use('/books', booksRouter);
+app.use('/api/usersbooks', userbooksRouter);
 app.use('/api/books', booksRouter);
-app.use('/reviews', reviewsRouter);
+app.use('/api/reviews', reviewsRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/authors', authorsRouter);
 
