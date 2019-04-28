@@ -16,13 +16,8 @@ router.get("/", (req, res, next) => {
 router.post("/", async function (req, res, next) {
     categoryModel
         .create(req.body)
-        .then(category => {
-            res.end(JSON.stringify(category));
-        })
-        .catch(err => {
-            console.log(err);
-            next(createError(400, err.message));
-        });
+        .then(category => res.send(category))
+        .catch(err => next(createError(400, err.message)));
 });
 
 //get one category by Id
@@ -39,7 +34,7 @@ router.get("/:categoryId", (req, res, next) => {
 //get the books assigned to category
 router.get("/books/:categoryName", async (req, res, next) => {
     categoryModel
-        .findOne({ Name: req.params.categoryName }).populate('Books')
+        .findOne({ name: req.params.categoryName }).populate('books')
         .exec()
         .then(category => res.send(category))
         .catch(err => next(createError(404, err.message)));

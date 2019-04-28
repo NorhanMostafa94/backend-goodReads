@@ -16,11 +16,12 @@ const categoryRouter = require('./routes/categories');
 var authorsRouter = require('./routes/authors');
 const app = express();
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE");
     next();
-  });
+});
 
 app.use(logger('dev'));
 app.use(express.json());
