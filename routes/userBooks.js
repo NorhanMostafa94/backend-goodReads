@@ -7,6 +7,7 @@ const CreateError = require("http-errors");
 
   router.get("/:userId", (req, res, next) => {
     User.findById(req.params.userId).populate('userbooks.book')
+  
     
     .exec()
     .then(user => {

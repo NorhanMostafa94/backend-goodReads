@@ -24,7 +24,7 @@ router.get('/', (req, res, next) => {
 
 router.get('/:authorId', (req, res, next) => {
     const id = req.params.authorId;
-    Author.findById(id).populate('books')
+    Author.findById(id).populate('books').populate('genre')
         .then(author => {
             res.send(author)
         })

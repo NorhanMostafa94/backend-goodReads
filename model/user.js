@@ -80,7 +80,7 @@ var userSchema = new Schema({
         type: Number,
         max: 5,
         // min:1
-      }
+      },
     }],
     default: []
   }
