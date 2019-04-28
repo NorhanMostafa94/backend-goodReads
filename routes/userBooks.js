@@ -7,11 +7,11 @@ const CreateError = require("http-errors");
 
 
   router.get("/:userId", (req, res, next) => {
-    User.findById(req.params.userId)
+    User.findById(req.params.userId).populate('Book')
     
     .exec()
     .then(user => {
-      res.send(user.userbooks);
+      res.send(user.userbooks.book.title);
     })
     .catch(err => {
       next(CreateError(400, err.message));
