@@ -129,6 +129,25 @@ router.patch("/rating/:userId/:bookId/:rating", async (req, res, next) => {
     });
 })
 
+//// change vook shelve
+router.patch("/:userId/:bookId/:shelve",async (req,res,next)=>{
+  shelve = req.params.shelve
+  bookId = req.params.bookId;
+  User.update({ 'userbooks.book': req.params.bookId }
+    , {
+      '$set': {
+        'userbooks.$.shelve': shelve
+      }
+    }
+  )
+.exec()
+    .then(user => {
+      res.send(user);
+    })
+    .catch(err => {
+      next(CreateError(400, err.message));
+    });
+})
 
 router.patch("/:userId/:bookId/:rating", async (req, res, next) => {
   bookrating = req.params.rating
@@ -143,7 +162,7 @@ router.patch("/:userId/:bookId/:rating", async (req, res, next) => {
       next(CreateError(400, err.message));
     });
 });
-router.patch("/currentlyreading/:userId/:bookId/:rating", async (req, res, next) => {
+router.patch("/currentlyreading/:userId/:bookId", async (req, res, next) => {
   bookrating = req.params.rating
   bookId = req.params.bookId;
   const b = await User.findByIdAndUpdate(req.params.userId,
