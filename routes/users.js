@@ -5,7 +5,7 @@ const CreateError = require("http-errors");
 const authMiddleware= require('../middlewares/authentication');
 
 //registeration
-
+debugger
 router.post("/", (req, res, next) => {
   // User.create(req.body)
   const user= new User(req.body)
@@ -17,16 +17,18 @@ router.post("/", (req, res, next) => {
     .catch(err => {
       next(CreateError(400, err.message));
     });
+    debugger
 });
 
 //login
+debugger
 router.post("/login",async function (req,res,next){
-  const {username,password}= req.body;
-  const currentuser = await User.findOne({username});
+  const {firstname,password}= req.body;
+  const currentuser = await User.findOne({firstname});
   if (!currentuser) return next (CreateError(401));
   // else {console.log("i found the username");}
   // res.send(currentuser);}
-  //debugger
+  // debugger
   let passwordMatch= await currentuser.verifyPassword(password);
 //debugger
   if (!passwordMatch) return next (CreateError(401));
@@ -35,11 +37,14 @@ router.post("/login",async function (req,res,next){
   const token = await currentuser.generateToken();
   res.send({
     profile:currentuser,
+   // currentuser
     token
   })
+  debugger
 })
 
-// router.use(authMiddleware)
+
+router.use(authMiddleware)
 
 
 
