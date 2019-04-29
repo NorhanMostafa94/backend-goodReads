@@ -5,93 +5,151 @@ const User = require("../model/user");
 const CreateError = require("http-errors");
 
 
-  router.get("/:userId", (req, res, next) => {
-    User.findById(req.params.userId).populate('userbooks.book')
-    
+const Book = require('./../model/Book');
+
+router.get("/:userId", (req, res, next) => {
+  User.findById(req.params.userId).populate({
+    path: 'userbooks.book',
+    populate: {
+      path: 'authorID',
+      model: 'Author'
+    }
+  })
+
     .exec()
     .then(user => {
-      
+
       res.send(user.userbooks);
     })
     .catch(err => {
       next(CreateError(400, err.message));
     });
-  });
+});
 
-  router.get("/read/:userId", (req, res, next) => {
-    User.findById(req.params.userId).populate('userbooks.book')
-      .exec()
-      .then((user) => {
-        let readBooks = [];
-        const userBook = user.userbooks
-        userBook.forEach(book => {
-          console.log(userBook.shelve);
-          if (book.book != null && book.shelve === 'read')
-            readBooks.push(book);
-        });
-        res.send(readBooks);
-      })
-      .catch(err => {
-        next(CreateError(400, err.message));
-      });
-  });
-
-  router.get("/currentlyreading/:userId", (req, res, next) => {
-    User.findById(req.params.userId).populate('userbooks.book')
-      .exec()
-      .then((user) => {
-        const currReading=[];
-        const userBooks = user.userbooks;
-        userBooks.forEach(book => {
-          if(book.book !=null && book.shelve==='currently reading')
-          currReading.push(book);
-        });
-        res.send(currReading);
-      })
-      .catch(err => {
-        next(CreateError(400, err.message));
-      });
-  });
-
-  router.get("/wantToRead/:userId", (req, res, next) => {
-    User.findById(req.params.userId).populate('userbooks.book')
-      .exec()
-      .then((user) => {
-        const currReading=[];
-        const userBooks = user.userbooks;
-        userBooks.forEach(book => {
-          if(book.book !=null && book.shelve==='want to read')
-          currReading.push(book);
-        });
-        res.send(currReading);
-      })
-      .catch(err => {
-        next(CreateError(400, err.message));
-      });
-  });
-
-
-
-  router.patch("/:userId/:bookId/:rating", async (req, res, next) => {
-    bookrating=req.params.rating
-    bookId=req.params.bookId;
-    const b=await User.findByIdAndUpdate(req.params.userId,
-        {$push: {userbooks: {book:bookId, rating:bookrating,shelve:"want to read"}}} , {safe: true, upsert: true})
+router.get("/read/:userId", (req, res, next) => {
+  User.findById(req.params.userId).populate({
+    path: 'userbooks.book',
+    populate: {
+      path: 'authorID',
+      model: 'Author'
+    }
+  })
     .exec()
-        .then(user => {
+    .then((user) => {
+      let readBooks = [];
+      const userBook = user.userbooks
+      userBook.forEach(book => {
+        console.log(userBook.shelve);
+        if (book.book != null && book.shelve === 'read')
+          readBooks.push(book);
+      });
+      res.send(readBooks);
+    })
+    .catch(err => {
+      next(CreateError(400, err.message));
+    });
+});
+
+router.get("/currentlyreading/:userId", (req, res, next) => {
+  User.findById(req.params.userId).populate({
+    path: 'userbooks.book',
+    populate: {
+      path: 'authorID',
+      model: 'Author'
+    }
+  })
+    .exec()
+    .then((user) => {
+      const currReading = [];
+      const userBooks = user.userbooks;
+      userBooks.forEach(book => {
+        if (book.book != null && book.shelve === 'currently reading')
+          currReading.push(book);
+      });
+      res.send(currReading);
+    })
+    .catch(err => {
+      next(CreateError(400, err.message));
+    });
+});
+
+router.get("/wantToRead/:userId", (req, res, next) => {
+  User.findById(req.params.userId).populate({
+    path: 'userbooks.book',
+    populate: {
+      path: 'authorID',
+      model: 'Author'
+    }
+  })
+    .exec()
+    .then((user) => {
+      const currReading = [];
+      const userBooks = user.userbooks;
+      userBooks.forEach(book => {
+        if (book.book != null && book.shelve === 'want to read')
+          currReading.push(book);
+      });
+      res.send(currReading);
+    })
+    .catch(err => {
+      next(CreateError(400, err.message));
+    });
+});
+
+
+//for testing rating
+router.patch("/rating/:userId/:bookId/:rating", async (req, res, next) => {
+  debugger;
+  bookrating = req.params.rating
+  const { avgrating } = await Book.findById(req.params.bookId)
+  // console.log(avgrating)
+  const users = await User.find({ 'userbooks.book': req.params.bookId })
+  const b = [];
+  const a = users.map(i => i.userbooks.filter(i => i.book == req.params.bookId)).map(r => r.map(rr => { b.push(rr.rating) }))
+  console.log(b)
+  const c = b.reduce(function (agg, val) {
+    return agg += val;
+
+  }, 0)
+  console.log(c)
+  User.update({ 'userbooks.book': req.params.bookId }
+    , {
+      '$set': {
+        'userbooks.$.rating': bookrating
+      }
+    }
+  )
+    .then(user => {
+      res.send(user);
+      Book.updateOne({_id:req.params.bookId},{avgrating:c/b.length})
+      .then()
+    })
+    .catch(err => {
+      next(CreateError(400, err.message));
+    });
+})
+
+
+router.patch("/:userId/:bookId/:rating", async (req, res, next) => {
+  bookrating = req.params.rating
+  bookId = req.params.bookId;
+  const b = await User.findByIdAndUpdate(req.params.userId,
+    { $push: { userbooks: { book: bookId, rating: bookrating, shelve: "want to read" } } }, { safe: true, upsert: true })
+    .exec()
+    .then(user => {
       res.send(user);
     })
     .catch(err => {
       next(CreateError(400, err.message));
     });
 });
-  router.patch("/currentlyreading/:userId/:bookId/:rating", async (req, res, next) => {
-    bookrating=req.params.rating
-    bookId=req.params.bookId;
-    const b=await User.findByIdAndUpdate(req.params.userId,
-        {$push: {userbooks: {book:bookId, rating:bookrating,shelve:"currently reading"}}} , {safe: true, upsert: true})
+router.patch("/currentlyreading/:userId/:bookId/:rating", async (req, res, next) => {
+  bookrating = req.params.rating
+  bookId = req.params.bookId;
+  const b = await User.findByIdAndUpdate(req.params.userId,
+    { $push: { userbooks: { book: bookId, rating: bookrating, shelve: "currently reading" } } }, { safe: true, upsert: true })
     .exec()
-        .then(user => {
+    .then(user => {
       res.send(user);
     })
     .catch(err => {
@@ -100,12 +158,12 @@ const CreateError = require("http-errors");
 });
 
 router.patch("/read/:userId/:bookId/:rating", async (req, res, next) => {
-    bookrating=req.params.rating
-    bookId=req.params.bookId;
-    const b=await User.findByIdAndUpdate(req.params.userId,
-        {$push: {userbooks: {book:bookId, rating:bookrating,shelve:"read"}}} , {safe: true, upsert: true})
+  bookrating = req.params.rating
+  bookId = req.params.bookId;
+  const b = await User.findByIdAndUpdate(req.params.userId,
+    { $push: { userbooks: { book: bookId, rating: bookrating, shelve: "read" } } }, { safe: true, upsert: true })
     .exec()
-        .then(user => {
+    .then(user => {
       res.send(user);
     })
     .catch(err => {

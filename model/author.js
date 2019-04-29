@@ -11,7 +11,8 @@ const authorScheme = new mongoose.Schema({
         type: String
     },
     genre: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+         ref: 'Category'
     },
     cover: {
         // data: Buffer,
