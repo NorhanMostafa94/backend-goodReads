@@ -9,29 +9,23 @@ const jwt = require('jsonwebtoken');
 const signPromise = util.promisify(jwt.sign);
 const verifyToken = util.promisify(jwt.verify);
 
-const secretKey ='kjkjkjlo';
+const secretKey =process.env.JWT_SECRET || 'kjkjkjlo';
+const saltRounds =process.env.SALT_ROUNDS || 10;
+
 const validateEmail = function (email) {
   var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return re.test(email);
 };
 
 
-const saltRounds = 10;
-const myPlaintextPassword = 's0/\/\P4$$w0rD';
-//  bcrypt.hash(myPlaintextPassword, saltRounds)
-//   .then(hashedPassword => {
-//     debugger
-//   })
-//   .catch(err => {
-//     debugger
-//   });
 
+const myPlaintextPassword = 's0/\/\P4$$w0rD';
 
 var userSchema = new Schema({
 
   userId: Schema.Types.ObjectId,
 
-  FirstName: {
+  firstname: {
     type: String,
     required: true,
     unique: true,
@@ -40,10 +34,10 @@ var userSchema = new Schema({
       unique: true
     }
   },
-  LastName: {
+  lastname: {
     type: String,
     required: true,
-    unique: true,
+   // unique: true,
     minlength: 3,
     index: {
       unique: true
@@ -66,13 +60,15 @@ var userSchema = new Schema({
   password: {
     type: String,
     required: true,
-    minlength: 3
-   // hidden:true
+    minlength: 3,
+   hidden:true
   },
-  username: { 
-    type: String, 
-    unique: true, 
-    required: true },
+  // username: { 
+  //   type: String, 
+  //   unique: true, 
+  //  // required: true 
+  // },
+
   // confirmPassword: {
   //   type: String,
   //   required: true
@@ -101,14 +97,10 @@ var userSchema = new Schema({
 }, {
     autoIndex: true,
     toJSON: {
-      transform: true
-    }
+          transform: true
+        }
   }
-  // {
-  //   toJSON: {
-  //     transform: true
-  //   }
-  // }
+
 );
 
 const hashPassword = password => bcrypt.hash(password, saltRounds);
@@ -142,7 +134,10 @@ userSchema.pre('save', async function () {
   //debugger
 });
 
-
+userSchema.options.toJSON.transform=(doc,ret,options)=>{
+delete ret.password;
+return  ret;
+}
 
 
 
