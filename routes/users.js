@@ -44,12 +44,12 @@ router.post("/login",async function (req,res,next){
 })
 
 
-router.use(authMiddleware)
+// router.use(authMiddleware)
 
 
 
 /* GET users listing. */
-router.get("/",authMiddleware, (req, res, next) => {
+router.get("/", (req, res, next) => {
   User
     .find({})
     .then(users => res.send(users))
