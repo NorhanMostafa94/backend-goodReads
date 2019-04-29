@@ -52,7 +52,7 @@ router.patch("/:categoryId", (req, res, next) => {
 //delete category
 router.delete("/:categoryId", (req, res, next) => {
     categoryModel
-        .findByIdAndUpdate(req.params.categoryId, { isDeleted: true })
+        .findByIdAndDelete(req.params.categoryId)
         .exec()
         .then(category => res.send(category))
         .catch(err => next(createError(500, err.message)));

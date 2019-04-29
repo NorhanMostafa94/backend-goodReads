@@ -3,21 +3,21 @@ const createError = require("http-errors");
 const Book = require('../model/Book');
 const categoryModel = require("../model/Category");
 const authorModel = require("../model/author");
+const reviewModel = require("../model/Reviews");
 const router = express.Router();
 
 router.post("/", async (req, res, next) => {
     const { categoryID, authorID } = req.body;
     const book = new Book(req.body);
     await res.send(book);
-    book
-        .save()
-        .then((bk) => {
-            categoryModel.updateOne({ _id: categoryID }, { $push: { books: bk._id } })
-                .then()
-            authorModel.updateOne({ _id: authorID }, { $push: { books: bk._id } })
-                .then()
-        })
-        .catch(err => next(createError(400, err.message)));
+    let bookId = ""
+    await book.save(async function (err, sth) {
+        bookId = await book._id;
+        await categoryModel.updateOne({ _id: categoryID }, { $push: { books: bookId } })
+            .then()
+        await authorModel.updateOne({ _id: authorID }, { $push: { books: bookId } })
+            .then()
+    })
 });
 
 // router.post("/", (req, res, next) => {
@@ -47,10 +47,25 @@ router.get("/:bookId", async (req, res, next) => {
         .catch(err => next(createError(404, err.message)));
 });
 
-router.delete("/:bookId", (req, res, next) => {
+router.delete("/:bookId", async (req, res, next) => {
+    await Book.findById({ _id: req.params.bookId })
+        .then(book => {
+            if (book.reviews.length != 0) {
+                book.reviews.map(rev => {
+                    reviewModel
+                        .findByIdAndDelete(rev)
+                        .exec()
+                        .then()
+                        .catch(err => next(createError(500, err.message)));
+                })
+            }
+        })
+
     Book.findByIdAndDelete(req.params.bookId, req.body)
         .exec()
-        .then(book => res.send(book))
+        .then(book => {
+            res.send(book)
+        })
         .catch(err => next(createError(400, err.message)));
 });
 

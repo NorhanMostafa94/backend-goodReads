@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const book = require('./Book');
 
 const ReviewSchema = new mongoose.Schema({
-    // userId:{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref:'User'  
-    // },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     name: {
         type: String
     },
@@ -18,10 +18,10 @@ const ReviewSchema = new mongoose.Schema({
     reviewDetails: {
         type: String
     },
-    bookID:{
+    bookID: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:'Book'       
-    },     
+        ref: 'Book'
+    },
     //creator:Number,
 
 

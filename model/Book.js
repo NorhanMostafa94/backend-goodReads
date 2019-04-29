@@ -26,11 +26,11 @@ const BookSchema = new mongoose.Schema({
     avgrating: {
         type: Number,
         required: true,
+        default: 0
     },
     rating: {
         type: Number,
-        required: true,
-
+        // required: true,
     },
     description: {
         type: String,
